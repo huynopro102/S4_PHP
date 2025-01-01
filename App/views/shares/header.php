@@ -37,6 +37,20 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/s4_php/favorite/">Sản phẩm yêu thích</a>
                     </li>
+                    <?php
+// echo '<pre>';
+// print_r($_SESSION['user_roles']);
+// echo '</pre>';
+// ?>
+                    <?php
+
+                    if (SessionHelper::isLoggedIn() && SessionHelper::isAdmin()):
+                    ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/s4_php/admin/Dashboard/index">Dashboard Admin</a>
+                        </li>
+                    <?php endif; ?>
+
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">
@@ -61,10 +75,10 @@
     </nav>
     <?php if (isset($_SESSION['message']) || isset($_SESSION['success']) || isset($_SESSION['error'])): ?>
         <div class="alert alert-<?php echo $_SESSION['message_type'] ?? ($_SESSION['success'] ? 'success' : 'danger'); ?> alert-dismissible fade show" role="alert">
-            <?php 
+            <?php
             // Hiển thị thông báo
-            echo $_SESSION['message'] ?? $_SESSION['success'] ?? $_SESSION['error']; 
-            
+            echo $_SESSION['message'] ?? $_SESSION['success'] ?? $_SESSION['error'];
+
             // Xóa thông báo sau khi hiển thị
             unset($_SESSION['message']);
             unset($_SESSION['success']);

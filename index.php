@@ -26,6 +26,11 @@ $url = filter_var($url, FILTER_SANITIZE_URL);
 $url = explode('/', $url);
 
 // --------------------check admin-------------------------
+// Lúc này mảng $url sẽ có dạng:
+// $url[0] = 'admin'              // Tiền tố controller
+// $url[1] = 'product'            // Phần quản lý (resource)
+// $url[2] = 'action' (edit/create/delete/view)
+// $url[3] = 'id' (nếu cần)
 
 $controllerName = isset($url[0]) && $url[0] == 'admin' ? 
     'Admin\\' . ucfirst($url[1]) . 'Controller' : 

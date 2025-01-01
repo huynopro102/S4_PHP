@@ -76,7 +76,7 @@ class AccountModel
     //     return $role_stmt->execute();
     // }
 
-    public function getRolesByUserId($user_id)
+    public function getRolesByUserId($user_id): array
     {
         $sql = "SELECT r.role_name 
                 FROM user_roles ur 
@@ -85,7 +85,7 @@ class AccountModel
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN); // Trả về mảng các chuỗi
     }
 
     /**

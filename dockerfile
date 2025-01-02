@@ -1,15 +1,24 @@
 # Base image
 FROM php:8.1-fpm
 
-# Cài đặt các extension PHP cần thiết
-RUN docker-php-ext-install pdo pdo_mysql mysqli
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    zip \
+    unzip \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    curl \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Copy source code vào container
-COPY ../app /var/www/html
+# Set working directory
+WORKDIR /var/www/html
 
-# Phân quyền
+# Copy application
+COPY . .
+
+# Set permissions
 RUN chown -R www-data:www-data /var/www/html
-RUN chmod -R 755 /var/www/html
 
 # Expose port
 EXPOSE 9000

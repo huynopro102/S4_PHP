@@ -1,4 +1,4 @@
-<?php include 'app/views/shares/header.php'; ?>
+<?php include 'app/views/shares/headerAdmin.php'; ?>
 <div class="container mt-5">
     <div class="card shadow-sm rounded p-4">
         <h1 class="text-center mb-4">Sửa sản phẩm</h1>
@@ -13,7 +13,7 @@
             </div>
         <?php endif; ?>
 
-        <form method="POST" action="/s4_php/product/update" enctype="multipart/form-data" onsubmit="return validateForm();">
+        <form method="POST" action="/s4_php/admin/Product/update" enctype="multipart/form-data" onsubmit="return validateForm();">
             <input type="hidden" name="id" value="<?php echo $product->id; ?>">
 
             <div class="mb-3">
@@ -56,9 +56,9 @@
 
             <div class="d-grid gap-2">
                 <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-                <a href="/s4_php/product/list" class="btn btn-secondary">Quay lại danh sách sản phẩm</a>
+                <a href="/s4_php/admin/Product/index" class="btn btn-secondary">Quay lại danh sách sản phẩm</a>
             </div>
         </form>
     </div>
 </div>
-<?php include 'app/views/shares/footer.php'; ?>
+<?php include 'app/views/shares/footerAdmin.php'; ?>

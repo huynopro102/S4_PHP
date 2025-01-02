@@ -33,34 +33,39 @@ $url = explode('/', $url);
 // $url[1] = 'product'            // Phần quản lý (resource)
 // $url[2] = 'action' (edit/create/delete/view)
 // $url[3] = 'id' (nếu cần)
+
+// Kiểm tra xem phần đầu URL có phải là 'admin' không
+// Kiểm tra xem phần đầu URL có phải là 'admin' không
 if (isset($url[0]) && $url[0] == 'admin') {
-    // Kiểm tra xem controller name có đúng không
+    // Tạo tên controller theo đường dẫn, không dùng namespace
     $controllerName = isset($url[1]) && $url[1] != '' ? 
-        'admin\\' . ucfirst($url[1]) . 'Controller' : 'admin\\DashboardController';
+        ucfirst($url[1]) . 'Controller' : 'DashboardController';  // Sửa đây
 
     // Xác định action
     $action = isset($url[2]) && $url[2] != '' ? $url[2] : 'index';
 
     // Kiểm tra xem controller và action có tồn tại không
-    if (!file_exists('app/controllers/' . str_replace('\\', '/', $controllerName) . '.php')) {
-        // Xử lý không tìm thấy controller
+    if (!file_exists('App/controllers/admin/' . $controllerName . '.php')) {
         die('Controller not found');
     }
 
-    require_once 'app/controllers/' . str_replace('\\', '/', $controllerName) . '.php';
+    require_once 'App/controllers/admin/' . $controllerName . '.php';
 
     // Khởi tạo controller
     $controller = new $controllerName();
-  
+
     // Kiểm tra xem action có tồn tại trong controller không
     if (!method_exists($controller, $action)) {
-        // Xử lý không tìm thấy action
         die('Action not found');
     }
 
     // Gọi action với các tham số còn lại (nếu có)
     call_user_func_array([$controller, $action], array_slice($url, 3));
 }
+
+
+
+
 // --------------------/check admin------------------------
 
 

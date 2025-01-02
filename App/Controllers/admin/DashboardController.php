@@ -1,8 +1,5 @@
 <?php
-namespace Admin;
 
-// Thêm use Database nếu class Database không có namespace Admin
-use Database;
 
 // Require necessary files
 require_once('app/config/database.php');
@@ -22,7 +19,6 @@ class DashboardController
             header('Location: /s4_php/account/login');
             exit;
         }
-
 
         $admin_name =  $_SESSION['username'] ?? 'Unknown Admin';
 

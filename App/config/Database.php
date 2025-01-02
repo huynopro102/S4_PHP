@@ -2,10 +2,10 @@
 
 class Database
 {
-    private $host = "localhost";
+    private $host = "15.235.197.40";
     private $db_name = "my_store";
     private $username = "root";
-    private $password = "";
+    private $password = "5Yn01pC8X8noLQOt7jUXtsLSBh3";
     public $conn;
     private $socket = "/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock"; // Thêm socket nếu cần
     public function getConnection()

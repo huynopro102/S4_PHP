@@ -25,22 +25,48 @@ $url = rtrim($url, '/');
 $url = filter_var($url, FILTER_SANITIZE_URL);
 $url = explode('/', $url);
 
+
+
 // --------------------check admin-------------------------
 // Lúc này mảng $url sẽ có dạng:
 // $url[0] = 'admin'              // Tiền tố controller
 // $url[1] = 'product'            // Phần quản lý (resource)
 // $url[2] = 'action' (edit/create/delete/view)
 // $url[3] = 'id' (nếu cần)
+if (isset($url[0]) && $url[0] == 'admin') {
+    // Kiểm tra xem controller name có đúng không
+    $controllerName = isset($url[1]) && $url[1] != '' ? 
+        'admin\\' . ucfirst($url[1]) . 'Controller' : 'admin\\DashboardController';
 
-$controllerName = isset($url[0]) && $url[0] == 'admin' ? 
-    'Admin\\' . ucfirst($url[1]) . 'Controller' : 
-    (isset($url[0]) && $url[0] != '' ? ucfirst($url[0]) . 'Controller' : 'DefaultController');
+    // Xác định action
+    $action = isset($url[2]) && $url[2] != '' ? $url[2] : 'index';
 
-// Xác định action
-$action = isset($url[2]) && $url[2] != '' ? $url[2] : 'index';
+    // Kiểm tra xem controller và action có tồn tại không
+    if (!file_exists('app/controllers/' . str_replace('\\', '/', $controllerName) . '.php')) {
+        // Xử lý không tìm thấy controller
+        die('Controller not found');
+    }
 
+    require_once 'app/controllers/' . str_replace('\\', '/', $controllerName) . '.php';
+
+    // Khởi tạo controller
+    $controller = new $controllerName();
+  
+    // Kiểm tra xem action có tồn tại trong controller không
+    if (!method_exists($controller, $action)) {
+        // Xử lý không tìm thấy action
+        die('Action not found');
+    }
+
+    // Gọi action với các tham số còn lại (nếu có)
+    call_user_func_array([$controller, $action], array_slice($url, 3));
+}
 // --------------------/check admin------------------------
 
+
+
+
+else{
 // Kiểm tra phần đầu tiên của URL để xác định controller
 $controllerName = isset($url[0]) && $url[0] != '' ? ucfirst($url[0]) . 'Controller' :  'DefaultController';
 // Kiểm tra phần thứ hai của URL để xác định action
@@ -64,3 +90,7 @@ if (!method_exists($controller, $action)) {
 
 // Gọi action với các tham số còn lại (nếu có)
 call_user_func_array([$controller, $action], array_slice($url, 2));
+}
+
+
+

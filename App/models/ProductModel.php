@@ -1,4 +1,5 @@
 <?php
+
 class productModel
 {
     private $conn;

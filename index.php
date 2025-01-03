@@ -1,101 +1,71 @@
 <?php
-// ini_set('session.gc_maxlifetime', 60); // 1 phút
 session_set_cookie_params(0);     
 session_start();
 
-// Bật hiển thị lỗi
 ini_set('display_errors', 1);
-error_reporting(error_level: E_ALL);
+error_reporting(E_ALL);
 
-// require_once 'app/models/ProductModel.php';
-// require_once 'app/models/CartModel.php';
 require_once 'app/helpers/SessionHelper.php';
 
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 60)) {
     session_unset();
     session_destroy();
-    header("Location: /s4_php/account/logout");
+    header("Location: /account/logout");
     exit;
 }
 $_SESSION['last_activity'] = time();
 
-// product/add
+
+
+
 $url = $_GET['url'] ?? '';
-$url = rtrim($url, '/');
-$url = filter_var($url, FILTER_SANITIZE_URL);
-$url = explode('/', $url);
+$url = parse_url($url, PHP_URL_PATH); // Lấy phần đường dẫn, bỏ query string
+$url = ltrim($url, '/'); // Loại bỏ dấu "/" ở đầu, nếu có
+$url = rtrim($url, '/'); // Loại bỏ dấu "/" ở cuối, nếu có
+$url = filter_var($url, FILTER_SANITIZE_URL); // Lọc URL
+$url = explode('/', $url); // Tách thành mảng
 
+var_dump($_GET);
 
-
-// --------------------check admin-------------------------
-// Lúc này mảng $url sẽ có dạng:
-// $url[0] = 'admin'              // Tiền tố controller
-// $url[1] = 'product'            // Phần quản lý (resource)
-// $url[2] = 'action' (edit/create/delete/view)
-// $url[3] = 'id' (nếu cần)
-
-// Kiểm tra xem phần đầu URL có phải là 'admin' không
-// Kiểm tra xem phần đầu URL có phải là 'admin' không
+if(isset($url[0])){
+    var_dump("[0] rong");
+    var_dump($url[0]);
+}
 if (isset($url[0]) && $url[0] == 'admin') {
-    // Tạo tên controller theo đường dẫn, không dùng namespace
     $controllerName = isset($url[1]) && $url[1] != '' ? 
-        ucfirst($url[1]) . 'Controller' : 'DashboardController';  // Sửa đây
+        ucfirst($url[1]) . 'Controller' : 'DashboardController';
 
-    // Xác định action
     $action = isset($url[2]) && $url[2] != '' ? $url[2] : 'index';
 
-    // Kiểm tra xem controller và action có tồn tại không
-    if (!file_exists('App/controllers/admin/' . $controllerName . '.php')) {
-        die('Controller not found');
+    // Sửa đường dẫn cho đúng với case sensitive
+    if (!file_exists('App/Controllers/admin/' . $controllerName . '.php')) {
+        die('Controller not found: App/Controllers/admin/' . $controllerName . '.php');
     }
 
-    require_once 'App/controllers/admin/' . $controllerName . '.php';
-
-    // Khởi tạo controller
+    require_once 'App/Controllers/admin/' . $controllerName . '.php';
     $controller = new $controllerName();
 
-    // Kiểm tra xem action có tồn tại trong controller không
     if (!method_exists($controller, $action)) {
-        die('Action not found');
+        die('Action not found in admin controller: ' . $action);
     }
 
-    // Gọi action với các tham số còn lại (nếu có)
     call_user_func_array([$controller, $action], array_slice($url, 3));
+} else {
+    $controllerName = isset($url[0]) && $url[0] != '' ? 
+        ucfirst($url[0]) . 'Controller' : 'DefaultController';
+    $action = isset($url[1]) && $url[1] != '' ? $url[1] : 'index';
+
+    // Sửa đường dẫn cho đúng với case sensitive
+    if (!file_exists('App/Controllers/' . $controllerName . '.php')) {
+        die('Controller not found: App/Controllers/' . $controllerName . '.php');
+    }
+
+    require_once 'App/Controllers/' . $controllerName . '.php';
+    $controller = new $controllerName();
+
+    if (!method_exists($controller, $action)) {
+        die('Action not found in controller: ' . $action);
+    }
+
+    call_user_func_array([$controller, $action], array_slice($url, 2));
 }
-
-
-
-
-// --------------------/check admin------------------------
-
-
-
-
-else{
-// Kiểm tra phần đầu tiên của URL để xác định controller
-$controllerName = isset($url[0]) && $url[0] != '' ? ucfirst($url[0]) . 'Controller' :  'DefaultController';
-// Kiểm tra phần thứ hai của URL để xác định action
-$action = isset($url[1]) && $url[1] != '' ? $url[1] : 'index';
-
-// die ("controller=$controllerName - action=$action");
-// Kiểm tra xem controller và action có tồn tại không
-if (!file_exists('app/controllers/' . $controllerName . '.php')) {
-    // Xử lý không tìm thấy controller
-    die('Controller not found');
-}
-
-require_once 'app/controllers/' . $controllerName . '.php';
-
-$controller = new $controllerName();
-
-if (!method_exists($controller, $action)) {
-    // Xử lý không tìm thấy action
-    die('Action not found');
-}
-
-// Gọi action với các tham số còn lại (nếu có)
-call_user_func_array([$controller, $action], array_slice($url, 2));
-}
-
-
-

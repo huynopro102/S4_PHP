@@ -1,26 +1,33 @@
-# Base image
+# Sử dụng base image PHP-FPM
 FROM php:8.1-fpm
 
-# Install dependencies
+# Cài đặt các package cần thiết
 RUN apt-get update && apt-get install -y \
-    zip \
-    unzip \
     libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
-    curl \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+    zip \
+    unzip
 
-# Set working directory
-WORKDIR /var/www/html
+# Cài đặt các PHP extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Copy application
-COPY . .
+# Đặt thư mục làm việc
+WORKDIR /app
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html
+# Copy toàn bộ mã nguồn vào container
+COPY . /app
 
-# Expose port
+# Phân quyền truy cập
+RUN chown -R www-data:www-data /app \
+    && find /app -type f -exec chmod 644 {} \; \
+    && find /app -type d -exec chmod 755 {} \; \
+    && chmod 755 /app/index.php
+    
+# Expose cổng 9000
 EXPOSE 9000
 
+# Khởi động PHP-FPM
 CMD ["php-fpm"]

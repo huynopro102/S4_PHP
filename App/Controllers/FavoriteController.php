@@ -21,8 +21,12 @@ class FavoriteController {
     
         // Thêm sản phẩm vào danh sách yêu thích
         if ($this->favoriteModel->addFavorite($user_id, $product_id)) {
-            $_SESSION['success'] = "Đã thêm vào danh sách yêu thích.";
-            $_SESSION['message_type'] = 'success'; // hoặc 'danger', 'info', 'success'
+
+            $_SESSION['message'] = 'Sản phẩm đã được thêm vào danh sách yêu thích!';
+            $_SESSION['message_type'] = 'success'; // Hoặc 'danger' tùy vào tình huống
+        
+
+
         } else {
             $_SESSION['error'] = "Sản phẩm đã có trong danh sách yêu thích.";
         }

@@ -138,6 +138,7 @@
                             </li>
                             <li><a href="./blog.html">Blog</a></li>
                             <li><a href="./contact.html">Contacts</a></li>
+                            <li><a href="/s4_php/cart">Cart</a></li>
                         </ul>
                     </nav>
                 </div>

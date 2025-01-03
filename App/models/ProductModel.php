@@ -108,7 +108,23 @@ class productModel
         return false;
     }
 
-
+    public function getProductsPaginated($limit, $offset)
+    {
+        try {
+            $query = "SELECT p.id, p.name, p.description, p.price, p.image, c.name as category_name 
+                      FROM " . $this->table_name . " p 
+                      LEFT JOIN categories c ON p.category_id = c.id 
+                      LIMIT :limit OFFSET :offset";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_OBJ);
+        } catch (Exception $e) {
+            echo 'Lỗi khi lấy sản phẩm: ' . $e->getMessage();
+        }
+    }
+    
 
     
 }

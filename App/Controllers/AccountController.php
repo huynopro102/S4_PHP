@@ -111,8 +111,8 @@ class AccountController
                     $_SESSION['user_roles'] = $this->accountModel->getRolesByUserId($account->id);
 
                     if ($rememberMe) {
-                        setcookie('user', $account->username, time() + (1 * 60), '/', '', false, true);
-                        setcookie('login_time', time(), time() + (1 * 60), '/', '', false, true);
+                        setcookie('user', $account->username, time() + (60 * 60), '/', '', false, true);
+                        setcookie('login_time', time(), time() + (60 * 60), '/', '', false, true);
                     }
 
                     header('Location: /s4_php/home/index');

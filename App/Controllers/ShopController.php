@@ -7,7 +7,7 @@ require_once('app/models/FavoriteModel.php');
 require_once('app/controllers/AccountController.php');
 
 class ShopController
-{
+{ 
     private $productModel;
     private $favoriteModel;
     private $db;
@@ -21,7 +21,7 @@ class ShopController
     public function index(): void
     {
         $accountController = new AccountController();
-
+    
         if (!isset($_SESSION['user_id'])) {
             if (!$accountController->autoLogin()) {
                 echo "Vui lòng đăng nhập lại.";
@@ -29,22 +29,28 @@ class ShopController
                 exit;
             }
         }
-
+    
         $user_id = $_SESSION['user_id'] ?? null;
-
-        // Nếu người dùng đã đăng nhập, lấy danh sách yêu thích
         $favorite_product_ids = [];
         if ($user_id) {
             $favorites = $this->favoriteModel->getUserFavorites($user_id);
-            $favorite_product_ids = array_map(function($favorite) {
-                return $favorite['id'];
-            }, $favorites);
+            $favorite_product_ids = array_map(fn($favorite) => $favorite['id'], $favorites);
         }
-
-        // echo 'This is the product index page'; // Debug message
-        $products = $this->productModel->getproducts();
+    
+        // Phân trang
+        $limit = 9; // Số sản phẩm mỗi trang
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+    
+        $products = $this->productModel->getProductsPaginated($limit, $offset);
+    
+        // Tổng số sản phẩm
+        $totalProducts = count($this->productModel->getproducts());
+        $totalPages = ceil($totalProducts / $limit);
+    
         include 'app/views/shop/index.php';
     }
+    
 
     public function show($id)
     {

@@ -2,6 +2,10 @@
 session_set_cookie_params(0);     
 session_start();
 
+require_once('app/config/database.php');
+require_once('app/models/ProductModel.php');
+require_once('app/models/CartModel.php');
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 

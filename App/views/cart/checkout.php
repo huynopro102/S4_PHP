@@ -1,4 +1,5 @@
-<?php include 'app/views/shares/header.php'; ?>
+<?php include 'app/views/shares/headerCopy.php'; ?>
+
 
 <div class="container mt-5">
     <h1 class="text-center mb-4">Thanh Toán</h1>
@@ -28,4 +29,4 @@
     </form>
 </div>
 
-<?php include 'app/views/shares/footer.php'; ?>
+<?php include 'app/views/shares/footerCopy.php'; ?>

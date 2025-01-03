@@ -9,9 +9,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Male-Fashion | Template</title>
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
-        rel="stylesheet">
+ 
+
 
     <!-- Css Styles -->
     <link rel="stylesheet" href="/s4_php/public/css/bootstrap.min.css" type="text/css">
@@ -136,8 +135,8 @@
                                     <li><a href="./blog-details.html">Blog Details</a></li>
                                 </ul>
                             </li>
-                            <li><a href="./blog.html">Blog</a></li>
-                            <li><a href="./contact.html">Contacts</a></li>
+                            <li><a href="/s4_php/blog/index">Blog</a></li>
+                            <li><a href="/s4_php/contacts/index">Contacts</a></li>
                             <li><a href="/s4_php/cart">Cart</a></li>
                         </ul>
                     </nav>

@@ -1,16 +1,13 @@
 <?php
+// Require SessionHelper and other necessary files
+require_once('app/config/database.php');
+require_once('app/models/ProductModel.php');
+require_once('app/models/CategoryModel.php');
+require_once('app/models/FavoriteModel.php');
+require_once('app/controllers/AccountController.php');
 
-// Require các file cần thiết
-require_once('App/config/Database.php');
-require_once('App/models/ProductModel.php');
-require_once('App/models/CategoryModel.php');
-require_once('App/models/FavoriteModel.php');
-require_once('App/controllers/AccountController.php');
-
-
-class ProductController
+class ShopController
 {
-
     private $productModel;
     private $favoriteModel;
     private $db;
@@ -20,7 +17,6 @@ class ProductController
         $this->productModel = new productModel($this->db);
         $this->favoriteModel = new favoriteModel($this->db);
     }
-
 
     public function index(): void
     {
@@ -47,36 +43,77 @@ class ProductController
 
         // echo 'This is the product index page'; // Debug message
         $products = $this->productModel->getproducts();
-
-        $admin_name =  $_SESSION['username'] ?? 'Unknown Admin';
-        include 'app/views/admin/product/list.php';
-    }
-
-
-    public function add(): void
-    {
-
-        // Kiểm tra xem người dùng có quyền truy cập dashboard hay không
-        if (!isset($_SESSION['user_roles']) || !in_array('Admin', $_SESSION['user_roles'])) {
-            $_SESSION['message'] = 'Bạn không có quyền truy cập trang này.';
-            $_SESSION['message_type'] = 'danger';
-            header('Location: /s4_php/account/login');
-            exit;
-        }
-        $admin_name =  $_SESSION['username'] ?? 'Unknown Admin';
-        $categories = (new CategoryModel($this->db))->getCategories();
-        include 'app/views/admin/product/add.php';
+        include 'app/views/shop/index.php';
     }
 
     public function show($id)
     {
         $product = $this->productModel->getproductById($id);
         if ($product) {
-            include 'app/views/admin/Product/show.php';
+            include 'app/views/product/show.php';
         } else {
             echo "Không thấy sản phẩm.";
         }
     }
+
+    public function add()
+    {
+        if (!in_array('Admin', $_SESSION['user_roles'])) {
+            // echo "Bạn không có quyền thực hiện chức năng này.";
+            $_SESSION['message'] = 'Bạn không có quyền thực hiện chức năng này.';
+            $_SESSION['message_type'] = 'danger'; // hoặc 'danger', 'info', 'success'
+
+            header('Location:' . $_SERVER['HTTP_REFERER']);
+            exit; // Dừng thực hiện
+        }
+
+        $categories = (new CategoryModel($this->db))->getCategories();
+        include_once 'app/views/product/add.php';
+    }
+
+    public function save()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $name = $_POST['name'] ?? '';
+            $description = $_POST['description'] ?? '';
+            $price = $_POST['price'] ?? '';
+            $category_id = $_POST['category_id'] ?? null;
+            $image = "";
+
+            $product = $this->productModel->addproduct($name, $description, $price, $category_id, image: $image);
+            if (isset($product['error'])) {
+                $errors[] = $product['error']; // Nếu có lỗi khi thêm sản phẩm
+                $categories = (new CategoryModel($this->db))->getCategories();
+                include 'app/views/product/add.php';
+                return;
+            } else {
+                $productId = $product['id'];
+                if (!$productId) {
+                    $errors[] = 'Không thể tạo ID cho sản phẩm. Vui lòng thử lại.';
+                }
+            }
+
+            if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+                try {
+                    $image = $this->uploadImage($_FILES['image'], $productId);
+                    $this->productModel->updateproduct($productId, $name, $description, $price, $category_id, $image);
+                } catch (Exception $e) {
+                    $errors[] = $e->getMessage();
+                }
+            }
+            // Chuyển hướng sau khi lưu
+            if (empty($errors)) {
+                $_SESSION['message'] = 'Tạo mới thành công sản phẩm ' . $name;
+                $_SESSION['message_type'] = 'success'; // hoặc 'danger', 'info', 'success'
+                header('Location: /s4_php/product');
+                exit;
+            } else {
+                $categories = (new CategoryModel($this->db))->getCategories();
+                include 'app/views/product/add.php';
+            }
+        }
+    }
+
 
     public function edit($id)
     {
@@ -91,15 +128,12 @@ class ProductController
 
         $product = $this->productModel->getproductById($id);
         $categories = (new CategoryModel($this->db))->getCategories();
-        $admin_name =  $_SESSION['username'] ?? 'Unknown Admin';
-
         if ($product) {
-            include 'app/views/admin/Product/edit.php';
+            include 'app/views/product/edit.php';
         } else {
             echo "Không thấy sản phẩm.";
         }
     }
-
     public function update()
     {   
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -109,12 +143,12 @@ class ProductController
             $price = $_POST['price'];
             $category_id = $_POST['category_id'];
             $existingImage = $_POST['existing_image'];
-            $admin_name =  $_SESSION['username'] ?? 'Unknown Admin';
+
             if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
                 $image = $this->uploadImage($_FILES['image'], $id);
                 
-                if ($existingImage && file_exists("/public/images/" . $existingImage)) {
-                    unlink("/public/images/" . $existingImage);  // Xóa ảnh cũ
+                if ($existingImage && file_exists("public/images/" . $existingImage)) {
+                    unlink("public/images/" . $existingImage);  // Xóa ảnh cũ
                 }
             } else {
                 $image = $existingImage;
@@ -128,12 +162,13 @@ class ProductController
                 $image
             );
             if ($edit) {
-                header('Location: /s4_php/admin/Product/index');
+                header('Location: /s4_php/product');
             } else {
                 echo "Đã xảy ra lỗi khi lưu sản phẩm.";
             }
         }
     }
+
     public function delete($id)
     {
         if (!in_array('Admin', $_SESSION['user_roles'])) {
@@ -168,58 +203,16 @@ class ProductController
         if ($this->productModel->deleteproduct($id)) {
             $_SESSION['message'] = 'Xóa sản phẩm thành công';
             $_SESSION['message_type'] = 'success'; // hoặc 'danger', 'info', 'success'
-            header('Location: /s4_php/admin/Product/index');
+            header('Location: /s4_php/product');
         } else {
             echo "Đã xảy ra lỗi khi xóa sản phẩm.";
         }
     }
 
-    public function save()
-    {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $name = $_POST['name'] ?? '';
-            $description = $_POST['description'] ?? '';
-            $price = $_POST['price'] ?? '';
-            $category_id = $_POST['category_id'] ?? null;
-            $image = "";
-
-            $product = $this->productModel->addproduct($name, $description, $price, $category_id, image: $image);
-            if (isset($product['error'])) {
-                $errors[] = $product['error']; // Nếu có lỗi khi thêm sản phẩm
-                $categories = (new CategoryModel($this->db))->getCategories();
-                include 'app/views/admin/Product/add.php';
-                return;
-            } else {
-                $productId = $product['id'];
-                if (!$productId) {
-                    $errors[] = 'Không thể tạo ID cho sản phẩm. Vui lòng thử lại.';
-                }
-            }
-
-            if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-                try {
-                    $image = $this->uploadImage($_FILES['image'], $productId);
-                    $this->productModel->updateproduct($productId, $name, $description, $price, $category_id, $image);
-                } catch (Exception $e) {
-                    $errors[] = $e->getMessage();
-                }
-            }
-            // Chuyển hướng sau khi lưu
-            if (empty($errors)) {
-                $_SESSION['message'] = 'Tạo mới thành công sản phẩm ' . $name;
-                $_SESSION['message_type'] = 'success'; // hoặc 'danger', 'info', 'success'
-                header('Location: /s4_php/admin/Product/index');
-                exit;
-            } else {
-                $categories = (new CategoryModel($this->db))->getCategories();
-                include 'app/views/admin/Product/add.php';
-            }
-        }
-    }
 
     private function uploadImage($file, $productId)
     {
-        $baseDir = realpath(__DIR__ . "/../../../");
+        $baseDir = realpath(__DIR__ . "/../../");
 
         $target_dir = $baseDir . "/public/images/";
 

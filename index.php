@@ -10,7 +10,8 @@ require_once 'app/helpers/SessionHelper.php';
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 60)) {
     session_unset();
     session_destroy();
-    header("Location: /account/logout");
+    header("Location: /S4_php/account/logout");
+    // header("Location: /S4_php/account/logout");
     exit;
 }
 $_SESSION['last_activity'] = time();
@@ -25,12 +26,13 @@ $url = rtrim($url, '/'); // Loại bỏ dấu "/" ở cuối, nếu có
 $url = filter_var($url, FILTER_SANITIZE_URL); // Lọc URL
 $url = explode('/', $url); // Tách thành mảng
 
-var_dump($_GET);
+// var_dump($_GET);
 
-if(isset($url[0])){
-    var_dump("[0] rong");
-    var_dump($url[0]);
-}
+// if(isset($url[0])){
+//     var_dump("[0] rong");
+//     var_dump($url[0]);
+// }
+
 if (isset($url[0]) && $url[0] == 'admin') {
     $controllerName = isset($url[1]) && $url[1] != '' ? 
         ucfirst($url[1]) . 'Controller' : 'DashboardController';

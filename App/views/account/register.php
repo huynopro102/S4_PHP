@@ -1,4 +1,5 @@
-<?php include 'app/views/shares/header.php'; ?>
+<?php include 'app/views/shares/headerCopy.php'; ?>
+  
 
 <section class="vh-100 gradient-custom">
     <div class="container py-5 h-100">
@@ -51,4 +52,4 @@
     </div>
 </section>
 
-<?php include 'app/views/shares/footer.php'; ?>
+<?php include 'app/views/shares/footerCopy.php'; ?>

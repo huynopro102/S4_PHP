@@ -1,4 +1,8 @@
-<?php include 'app/views/shares/header.php'; ?>
+<!-- <?php include 'app/views/shares/header.php'; ?> -->
+
+<?php include 'app/views/shares/headerCopy.php'; ?>
+  
+  
 
 <div class="container mt-5">
     <h1 class="text-center mb-4">Thêm sản phẩm mới</h1>
@@ -48,4 +52,7 @@
         <a href="/s4_php/product" class="btn btn-secondary">Quay lại danh sách sản phẩm</a>
     </div>
 </div>
-<?php include 'app/views/shares/footer.php'; ?>
+
+<?php include 'app/views/shares/footerCopy.php'; ?>
+
+<!-- <?php include 'app/views/shares/footer.php'; ?> -->

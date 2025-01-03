@@ -37,11 +37,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/s4_php/favorite/">Sản phẩm yêu thích</a>
                     </li>
-                    <?php
-// echo '<pre>';
-// print_r($_SESSION['user_roles']);
-// echo '</pre>';
-// ?>
+     
                     <?php
 
                     if (SessionHelper::isLoggedIn() && SessionHelper::isAdmin()):

@@ -115,7 +115,7 @@ class AccountController
                         setcookie('login_time', time(), time() + (1 * 60), '/', '', false, true);
                     }
 
-                    header('Location: /s4_php/product/');
+                    header('Location: /s4_php/home/index');
                     var_dump($_SESSION['user_roles']);
 
                     exit;

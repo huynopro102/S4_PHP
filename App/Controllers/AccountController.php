@@ -17,6 +17,7 @@ class AccountController
 
 
 
+
     function register()
     {
         include_once 'app/views/account/register.php';
@@ -27,6 +28,14 @@ class AccountController
     {
         include_once 'app/views/account/login.php';
     }
+
+
+
+
+  
+
+   
+
 
 
     function save()

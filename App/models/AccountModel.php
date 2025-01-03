@@ -103,4 +103,100 @@ class AccountModel
     //     $stmt->execute();
     //     return (bool) $stmt->fetchColumn();
     // }
+
+
+
+
+
+
+
+
+
+
+
+
+    public function getAllAccounts()
+    {
+        $query = "SELECT * FROM " . $this->table_name;
+        $stmt = $this->conn->query($query);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+    
+
+
+    public function getAccountById($id)
+    {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+    
+
+
+
+
+    public function delete($id)
+    {
+        $query = "DELETE FROM " . $this->table_name . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    
+    
+    public function getAllRoles() {
+        $query = "SELECT * FROM roles";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+// Sửa phương thức update để xử lý role
+public function update($id, $username, $fullname, $password = null, $role_id = null) {
+    try {
+        $this->conn->beginTransaction();
+        
+        // Update account info
+        $query = "UPDATE " . $this->table_name . " SET username = :username, fullname = :fullname";
+        if ($password) {
+            $query .= ", password = :password";
+        }
+        $query .= " WHERE id = :id";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':fullname', $fullname);
+        if ($password) {
+            $stmt->bindParam(':password', $password);
+        }
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        
+        if ($stmt->execute() && $role_id) {
+            // Update role
+            $role_query = "UPDATE user_roles SET role_id = :role_id WHERE user_id = :user_id";
+            $role_stmt = $this->conn->prepare($role_query);
+            $role_stmt->bindParam(':role_id', $role_id, PDO::PARAM_INT);
+            $role_stmt->bindParam(':user_id', $id, PDO::PARAM_INT);
+            $role_stmt->execute();
+        }
+        
+        $this->conn->commit();
+        return true;
+    } catch (Exception $e) {
+        $this->conn->rollBack();
+        return false;
+    }
+}
+
+// Thêm phương thức để lấy role hiện tại của user
+public function getCurrentRole($user_id) {
+    $query = "SELECT role_id FROM user_roles WHERE user_id = :user_id";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchColumn();
+}
+
 }

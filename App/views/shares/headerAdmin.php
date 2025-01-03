@@ -31,7 +31,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="http://localhost/s4_php/admin/Dashboard/index">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/s4_php/admin/Dashboard/index">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -68,10 +68,11 @@
                         <h6 class="collapse-header">Custom Components:</h6>
                         <a class="collapse-item" href="buttons.html">Buttons</a>
                         <a class="collapse-item" href="cards.html">Cards</a>
-                        <a class="collapse-item" href="http://localhost/s4_php/admin/Product/index">Product List</a>
-                        <a class="collapse-item" href="http://localhost/s4_php/admin/Product/add">Product Add</a>
+                        <a class="collapse-item" href="/s4_php/admin/Product/index">Product List</a>
+                        <a class="collapse-item" href="/s4_php/admin/Product/add">Product Add</a>
                         <a class="collapse-item" href="cards.html">Category</a>
-                        <a class="collapse-item" href="cards.html">User</a>
+                        <a class="collapse-item" href="/s4_php/admin/Account/index">Account</a>
+                        <a class="collapse-item" href="/s4_php/admin/Category/index">Category</a>
                     </div>
                 </div>
             </li>
